@@ -1,9 +1,6 @@
 /* ═══════════════════════════════════════════
    CONSTANTS & STATE
 ═══════════════════════════════════════════ */
-const API = 'https://up-project.onrender.com/api'; // Замените на ваш URL в Render
-console.log('API URL:', API);
-
 const state = {
   token:        null,
   user:         null,
@@ -14,7 +11,6 @@ const state = {
   totalPages:   1,
   lastFilters:  {},
 };
-//письки 
 /* ═══════════════════════════════════════════
    DOM READY
 ═══════════════════════════════════════════ */
