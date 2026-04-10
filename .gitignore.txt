@@ -1,0 +1,79 @@
+# Зависимости
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Файлы окружения (важные! чтобы не залить секреты)
+.env
+.env.local
+.env.*.local
+
+# Логи
+logs/
+*.log
+pm2-*.log
+
+# Файлы базы данных (если есть локальные копии)
+*.sqlite
+*.sqlite3
+*.db
+
+# Файлы IDE и редакторов
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Файлы сборки и временные файлы
+dist/
+build/
+tmp/
+temp/
+*.tmp
+
+# Пользовательские данные (если сохраняете что-то локально)
+uploads/
+downloads/
+screenshots/
+*.jpg
+*.png
+*.jpeg
+
+# Файлы отчётов и покрытия
+coverage/
+.nyc_output/
+
+# Файлы резервных копий
+*.bak
+*.backup
+*.old
+
+# Конфиги ОС
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Файлы отладки
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Файлы, специфичные для проекта
+# (добавьте любые другие файлы, которые не хотите публиковать)
+
+# Файлы с паролями или ключами
+*.pem
+*.key
+*.cert
+*.p12

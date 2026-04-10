@@ -1,0 +1,926 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноФайндер</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- CYBERPUNK PARTICLE BACKGROUND -->
+<div class="particles-container" id="particlesContainer">
+    <div class="cyber-grid"></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <span class="logo-icon">KF</span>
+            <span class="logo-text">КиноФайндер</span>
+        </div>
+        <div class="auth-tabs">
+            <button class="auth-tab-btn active" id="tabLoginBtn">Вход</button>
+            <button class="auth-tab-btn" id="tabRegisterBtn">Регистрация</button>
+        </div>
+        <div id="loginForm" class="auth-form">
+            <div class="field-group">
+                <label class="field-label">Email</label>
+                <input type="email" id="loginEmail" class="field-input" placeholder="example@mail.ru">
+            </div>
+            <div class="field-group">
+                <label class="field-label">Пароль</label>
+                <input type="password" id="loginPassword" class="field-input" placeholder="Введите пароль">
+            </div>
+            <p id="loginError" class="form-error"></p>
+            <button class="btn-primary" id="loginBtn">Войти</button>
+        </div>
+        <div id="registerForm" class="auth-form hidden">
+            <div class="field-group">
+                <label class="field-label">Имя пользователя</label>
+                <input type="text" id="regUsername" class="field-input" placeholder="Ваше имя">
+            </div>
+            <div class="field-group">
+                <label class="field-label">Email</label>
+                <input type="email" id="regEmail" class="field-input" placeholder="example@mail.ru">
+            </div>
+            <div class="field-group">
+                <label class="field-label">Пароль</label>
+                <input type="password" id="regPassword" class="field-input" placeholder="Минимум 6 символов">
+            </div>
+            <p id="registerError" class="form-error"></p>
+            <button class="btn-primary" id="registerBtn">Зарегистрироваться</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="app hidden">
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-icon">KF</span>
+                <span class="logo-text">КиноФайндер</span>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" data-tab="search">⌕ Поиск</button>
+                <button class="nav-btn" data-tab="liked">♥ Избранное <span id="likedBadge" class="nav-badge hidden">0</span></button>
+                <button class="nav-btn" data-tab="watched">◎ Просмотрено <span id="watchedBadge" class="nav-badge hidden">0</span></button>
+                <button class="nav-btn" data-tab="profile">◌ Профиль</button>
+            </nav>
+            <div class="header-user">
+                <span id="headerUsername" class="header-username"></span>
+                <button class="btn-logout" id="logoutBtn">Выйти</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div id="tabSearch" class="tab-pane active">
+            <div class="search-hero">
+                <h1 class="search-title">Найдите идеальный фильм</h1>
+                <p class="search-subtitle">Опишите словами, что хотите посмотреть, или выберите жанр/страну/год</p>
+            </div>
+            <div class="filters-card">
+                <div class="filters-grid">
+                    <div class="filter-item">
+                        <label class="filter-label">⌨ Что хотите посмотреть?</label>
+                        <input type="text" id="descriptionInput" class="filter-input" placeholder="Например: фильм про любовь, животные разговаривают, космос, путешествие во времени, смешная комедия...">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">◈ Жанр</label>
+                        <select id="genreFilter" class="filter-select">
+                            <option value="">Все жанры</option>
+                            <option value="комедия">Комедия</option>
+                            <option value="драма">Драма</option>
+                            <option value="боевик">Боевик</option>
+                            <option value="ужасы">Ужасы</option>
+                            <option value="триллер">Триллер</option>
+                            <option value="фантастика">Фантастика</option>
+                            <option value="мелодрама">Мелодрама</option>
+                            <option value="аниме">Аниме</option>
+                            <option value="криминал">Криминал</option>
+                            <option value="приключения">Приключения</option>
+                            <option value="детектив">Детектив</option>
+                            <option value="вестерн">Вестерн</option>
+                            <option value="военный">Военный</option>
+                            <option value="история">История</option>
+                            <option value="музыка">Музыкальный</option>
+                            <option value="мюзикл">Мюзикл</option>
+                            <option value="спорт">Спорт</option>
+                            <option value="биография">Биография</option>
+                            <option value="документальный">Документальный</option>
+                            <option value="семейный">Семейный</option>
+                            <option value="фэнтези">Фэнтези</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">◉ Страна</label>
+                        <select id="countryFilter" class="filter-select">
+                            <option value="">Любая страна</option>
+                            <option value="США">🇺🇸 США</option>
+                            <option value="Россия">🇷🇺 Россия</option>
+                            <option value="Великобритания">🇬🇧 Великобритания</option>
+                            <option value="Франция">🇫🇷 Франция</option>
+                            <option value="Германия">🇩🇪 Германия</option>
+                            <option value="Япония">🇯🇵 Япония</option>
+                            <option value="Корея Южная">🇰🇷 Южная Корея</option>
+                            <option value="Италия">🇮🇹 Италия</option>
+                            <option value="Испания">🇪🇸 Испания</option>
+                            <option value="Канада">🇨🇦 Канада</option>
+                            <option value="Австралия">🇦🇺 Австралия</option>
+                            <option value="Индия">🇮🇳 Индия</option>
+                            <option value="Китай">🇨🇳 Китай</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">▦ Год</label>
+                        <select id="yearFilter" class="filter-select"><option value="">Любой год</option></select>
+                    </div>
+                </div>
+                <div class="filters-actions">
+                    <button class="btn-search" id="searchBtn">⌕ Найти фильмы</button>
+                    <button class="btn-random" id="randomBtn">◍ Рандомный фильм</button>
+                    <button class="btn-reset" id="resetBtn">↻ Сбросить</button>
+                </div>
+            </div>
+            <div id="searchResults" class="movies-grid"></div>
+        </div>
+
+        <div id="tabLiked" class="tab-pane">
+            <h1>♥ Избранные фильмы</h1>
+            <div id="likedGrid" class="movies-grid"></div>
+            <div id="likedEmpty" class="empty-state hidden">Нет избранных фильмов</div>
+        </div>
+
+        <div id="tabWatched" class="tab-pane">
+            <h1>◎ Просмотренные фильмы</h1>
+            <div id="watchedGrid" class="movies-grid"></div>
+            <div id="watchedEmpty" class="empty-state hidden">Нет просмотренных фильмов</div>
+        </div>
+
+        <div id="tabProfile" class="tab-pane">
+            <div class="profile-wrap">
+                <div class="profile-hero">
+                    <div class="profile-avatar" id="profileAvatar">U</div>
+                    <div class="profile-details">
+                        <h1 id="profileName">Пользователь</h1>
+                        <p id="profileEmail" class="profile-email">email@mail.ru</p>
+                        <p id="profileSince" class="profile-since">На сайте с: —</p>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-box"><div class="stat-icon">♥</div><div class="stat-val" id="statLiked">0</div><div class="stat-lbl">Избранных</div></div>
+                    <div class="stat-box"><div class="stat-icon">◎</div><div class="stat-val" id="statWatched">0</div><div class="stat-lbl">Просмотрено</div></div>
+                    <div class="stat-box"><div class="stat-icon">▣</div><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Всего</div></div>
+                </div>
+                <div class="streaming-section">
+                    <h2 class="streaming-title">◉ Где смотреть фильмы</h2>
+                    <div class="streaming-grid">
+                        <a href="https://hd.kinopoisk.ru" target="_blank" class="stream-card"><div class="stream-logo kp">КП</div><span>Кинопоиск</span></a>
+                        <a href="https://www.ivi.ru" target="_blank" class="stream-card"><div class="stream-logo iv">IVI</div><span>IVI</span></a>
+                        <a href="https://premier.one" target="_blank" class="stream-card"><div class="stream-logo pr">PR</div><span>Premier</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // ========== CONFIG ==========
+    const API = 'http://localhost:3001/api';
+    
+    // ========== STATE ==========
+    let token = localStorage.getItem('token');
+    let currentUser = (() => {
+        try {
+            const raw = localStorage.getItem('currentUser');
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    })();
+    let currentMovies = [];
+    let likedIds = new Set();
+    let watchedIds = new Set();
+    let likedMoviesData = [];
+    let watchedMoviesData = [];
+    let interactiveParticles = [];
+    let repelMouse = { x: -9999, y: -9999, active: false };
+    let repelFrameId = null;
+
+    // ========== KEYWORD MAPPINGS ==========
+    const keywordMappings = {
+        'веселый': 'комедия', 'смешной': 'комедия', 'юмор': 'комедия',
+        'грустный': 'драма', 'трогательный': 'драма', 'душевный': 'драма',
+        'страшный': 'ужасы', 'жуткий': 'ужасы', 'хоррор': 'ужасы',
+        'романтичный': 'мелодрама', 'любовь': 'мелодрама',
+        'напряженный': 'триллер', 'детектив': 'детектив',
+        'экшн': 'боевик', 'драка': 'боевик', 'крутой': 'боевик',
+        'фантастика': 'фантастика', 'космос': 'фантастика',
+        'магия': 'фэнтези', 'волшебство': 'фэнтези',
+        'животные': 'семейный', 'путешествие': 'приключения',
+        'война': 'военный', 'спорт': 'спорт', 'музыка': 'музыкальный',
+        'история': 'история', 'время': 'фантастика'
+    };
+
+    function extractKeywordsFromText(text) {
+        const stopWords = ['хочу', 'посмотреть', 'фильм', 'где', 'будет', 'чтобы', 'который', 'очень', 'просто'];
+        const words = text.toLowerCase().split(/[\s,.;:!?()\-]+/);
+        let keywords = words.filter(word => word.length > 2 && !stopWords.includes(word));
+        keywords = [...new Set(keywords)];
+        
+        const mappedGenres = [];
+        for (const word of keywords) {
+            if (keywordMappings[word]) {
+                mappedGenres.push(keywordMappings[word]);
+            }
+        }
+        
+        return { keywords, mappedGenres: [...new Set(mappedGenres)] };
+    }
+
+    function normalizeMovieId(id) {
+        return String(id ?? '');
+    }
+
+    // ========== TOAST ==========
+    function showToast(msg, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ========== AUTH FETCH ==========
+    async function authFetch(url, options = {}) {
+        return fetch(url, {
+            ...options,
+            headers: {
+                ...(options.headers || {}),
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+    }
+
+    // ========== LOAD USER MOVIE SETS ==========
+    async function loadUserMovieSets() {
+        if (!token) return;
+        try {
+            const [likedRes, watchedRes] = await Promise.all([
+                authFetch(`${API}/movies/ids?status=liked`),
+                authFetch(`${API}/movies/ids?status=watched`)
+            ]);
+            const likedData = await likedRes.json();
+            const watchedData = await watchedRes.json();
+            likedIds = new Set(likedData.ids || []);
+            watchedIds = new Set(watchedData.ids || []);
+            updateBadges();
+            updateProfileStats();
+        } catch (err) { console.error(err); }
+    }
+
+    function updateBadges() {
+        const likedBadge = document.getElementById('likedBadge');
+        const watchedBadge = document.getElementById('watchedBadge');
+        if (likedIds.size > 0) { likedBadge.textContent = likedIds.size; likedBadge.classList.remove('hidden'); }
+        else { likedBadge.classList.add('hidden'); }
+        if (watchedIds.size > 0) { watchedBadge.textContent = watchedIds.size; watchedBadge.classList.remove('hidden'); }
+        else { watchedBadge.classList.add('hidden'); }
+    }
+
+    function hydrateProfileFromCurrentUser() {
+        if (!currentUser) return;
+        if (currentUser.username) {
+            document.getElementById('headerUsername').textContent = currentUser.username;
+            document.getElementById('profileName').textContent = currentUser.username;
+            document.getElementById('profileAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+        }
+        if (currentUser.email) {
+            document.getElementById('profileEmail').textContent = '✉ ' + currentUser.email;
+        }
+        if (currentUser.created_at) {
+            document.getElementById('profileSince').textContent = '▦ На сайте с: ' + new Date(currentUser.created_at).toLocaleDateString('ru-RU');
+        }
+    }
+
+    async function updateProfileStats() {
+        try {
+            const res = await authFetch(`${API}/user/profile`);
+            if (!res.ok) throw new Error('Profile request failed');
+            const data = await res.json();
+            document.getElementById('statLiked').textContent = likedIds.size;
+            document.getElementById('statWatched').textContent = watchedIds.size;
+            document.getElementById('statTotal').textContent = likedIds.size + watchedIds.size;
+            if (data.created_at) {
+                document.getElementById('profileSince').textContent = '▦ На сайте с: ' + new Date(data.created_at).toLocaleDateString('ru-RU');
+            }
+            if (data.username) {
+                document.getElementById('profileName').textContent = data.username;
+                document.getElementById('profileAvatar').textContent = data.username.charAt(0).toUpperCase();
+            }
+            if (data.email) {
+                document.getElementById('profileEmail').textContent = '✉ ' + data.email;
+            }
+            currentUser = { ...(currentUser || {}), ...data };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        } catch (err) { console.error(err); }
+    }
+
+    // ========== AUTH ==========
+    function switchAuthTab(tab) {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginBtn = document.getElementById('tabLoginBtn');
+        const regBtn = document.getElementById('tabRegisterBtn');
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden'); registerForm.classList.add('hidden');
+            loginBtn.classList.add('active'); regBtn.classList.remove('active');
+        } else {
+            loginForm.classList.add('hidden'); registerForm.classList.remove('hidden');
+            loginBtn.classList.remove('active'); regBtn.classList.add('active');
+        }
+    }
+
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const errorEl = document.getElementById('loginError');
+        errorEl.textContent = '';
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            token = data.token; currentUser = data.user;
+            localStorage.setItem('token', token);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showApp();
+            showToast('Добро пожаловать, ' + data.user.username + '!', 'success');
+        } catch (err) { errorEl.textContent = err.message; }
+    }
+
+    async function handleRegister() {
+        const username = document.getElementById('regUsername').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const errorEl = document.getElementById('registerError');
+        errorEl.textContent = '';
+        if (password.length < 6) { errorEl.textContent = 'Пароль минимум 6 символов'; return; }
+        try {
+            const res = await fetch(`${API}/auth/register`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            token = data.token; currentUser = data.user;
+            localStorage.setItem('token', token);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showApp();
+            showToast('Регистрация успешна!', 'success');
+        } catch (err) { errorEl.textContent = err.message; }
+    }
+
+    function showApp() {
+        document.getElementById('authOverlay').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        if (!currentUser) {
+            try {
+                const raw = localStorage.getItem('currentUser');
+                currentUser = raw ? JSON.parse(raw) : null;
+            } catch {}
+        }
+        document.getElementById('headerUsername').textContent = currentUser?.username || '';
+        hydrateProfileFromCurrentUser();
+        runCinematicEntrance();
+        loadUserMovieSets();
+    }
+
+    function hideApp() {
+        document.getElementById('authOverlay').classList.remove('hidden');
+        document.getElementById('app').classList.add('hidden');
+        token = null; currentUser = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
+    }
+
+    // ========== SEARCH MOVIES (UPDATED) ==========
+    async function searchMovies() {
+        const genre = document.getElementById('genreFilter').value;
+        const country = document.getElementById('countryFilter').value;
+        const year = document.getElementById('yearFilter').value;
+        const description = document.getElementById('descriptionInput').value.trim();
+        const resultsDiv = document.getElementById('searchResults');
+        
+        resultsDiv.innerHTML = '<div class="empty-state">Загрузка...</div>';
+        
+        try {
+            const params = new URLSearchParams();
+            
+            if (description) {
+                const { mappedGenres } = extractKeywordsFromText(description);
+                if (mappedGenres.length > 0) {
+                    params.append('genre', mappedGenres[0]);
+                }
+                params.append('query', description);
+            } else {
+                if (genre) params.append('genre', genre);
+                if (year) params.append('year', year);
+            }
+            
+            if (country && country !== '') {
+                params.append('country', country);
+            }
+            
+            params.append('limit', 50);
+            
+            const res = await authFetch(`${API}/movies/search?${params}`);
+            const data = await res.json();
+            let movies = data.docs || [];
+            
+            currentMovies = movies;
+            
+            if (currentMovies.length === 0) {
+                resultsDiv.innerHTML = '<div class="empty-state">Фильмы не найдены</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = currentMovies.map((movie, idx) => {
+                const posterUrl = movie.poster?.url || movie.poster?.previewUrl || movie.poster_url;
+                const id = normalizeMovieId(movie.kinopoisk_id || movie.id);
+                const isLiked = likedIds.has(id);
+                const isWatched = watchedIds.has(id);
+                const genreText = (movie.genres || []).map(g => g.name || g).filter(Boolean).slice(0, 2).join(', ');
+                const countryText = (movie.countries || []).map(c => c.name || c).filter(Boolean).slice(0, 1).join(', ');
+                const shortDescription = (movie.description || movie.shortDescription || '').trim();
+                return `
+                    <div class="movie-card" data-id="${id}" onclick="openMovieModal(${idx})">
+                        <div class="movie-poster">
+                            ${posterUrl ? `<img src="${posterUrl}" alt="${movie.name || movie.title}">` : '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:48px;">▣</div>'}
+                            ${movie.rating?.kp ? `<div class="movie-rating">★ ${movie.rating.kp.toFixed(1)}</div>` : ''}
+                            <div class="movie-actions">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" onclick='event.stopPropagation(); toggleLike(${JSON.stringify(id)}, ${idx})'>${isLiked ? '♥' : '♡'}</button>
+                                <button class="action-btn watch-btn ${isWatched ? 'watched' : ''}" onclick='event.stopPropagation(); toggleWatched(${JSON.stringify(id)}, ${idx})'>${isWatched ? '◎' : '○'}</button>
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.name || movie.title || 'Без названия'}</div>
+                            <div class="movie-year">${movie.year || '—'}</div>
+                            ${(genreText || countryText) ? `<div class="movie-year">${[genreText, countryText].filter(Boolean).join(' • ')}</div>` : ''}
+                            ${shortDescription ? `<div class="movie-year">${shortDescription.slice(0, 90)}${shortDescription.length > 90 ? '...' : ''}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            setTimeout(() => observeMovieCards(), 100);
+            showToast(`Найдено ${currentMovies.length} фильмов`, 'success');
+            
+        } catch(err) { 
+            console.error(err);
+            resultsDiv.innerHTML = '<div class="empty-state">Ошибка при поиске</div>';
+        }
+    }
+
+    async function toggleLike(movieId, idx) {
+        const movie = currentMovies[idx];
+        if (!movie) return;
+        const isLiked = likedIds.has(movieId);
+        try {
+            const res = await authFetch(`${API}/movies/like`, {
+                method: isLiked ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie: { kinopoisk_id: movieId, title: movie.name || movie.title, year: movie.year, poster_url: movie.poster?.url || movie.poster_url, rating: movie.rating?.kp, genres: (movie.genres || []).map(g=>g.name).join(','), description: movie.description } })
+            });
+            if (res.ok) {
+                if (isLiked) { likedIds.delete(movieId); showToast('Убрано из избранного', 'info'); }
+                else { likedIds.add(movieId); showToast('Добавлено в избранное', 'success'); }
+                updateBadges();
+                updateProfileStats();
+                refreshCurrentCards();
+            }
+        } catch(err) { showToast('Ошибка', 'error'); }
+    }
+
+    async function toggleWatched(movieId, idx) {
+        const movie = currentMovies[idx];
+        if (!movie) return;
+        const isWatched = watchedIds.has(movieId);
+        try {
+            const res = await authFetch(`${API}/movies/watch`, {
+                method: isWatched ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie: { kinopoisk_id: movieId, title: movie.name || movie.title, year: movie.year, poster_url: movie.poster?.url || movie.poster_url, rating: movie.rating?.kp, genres: (movie.genres || []).map(g=>g.name).join(','), description: movie.description } })
+            });
+            if (res.ok) {
+                if (isWatched) { watchedIds.delete(movieId); showToast('Убрано из просмотренных', 'info'); }
+                else { watchedIds.add(movieId); showToast('Отмечено просмотренным', 'success'); }
+                updateBadges();
+                updateProfileStats();
+                refreshCurrentCards();
+            }
+        } catch(err) { showToast('Ошибка', 'error'); }
+    }
+
+    function refreshCurrentCards() {
+        document.querySelectorAll('.movie-card').forEach(card => {
+            const id = normalizeMovieId(card.dataset.id);
+            const likeBtn = card.querySelector('.like-btn');
+            const watchBtn = card.querySelector('.watch-btn');
+            if (likeBtn) {
+                likeBtn.textContent = likedIds.has(id) ? '♥' : '♡';
+                likeBtn.classList.toggle('liked', likedIds.has(id));
+            }
+            if (watchBtn) {
+                watchBtn.textContent = watchedIds.has(id) ? '◎' : '○';
+                watchBtn.classList.toggle('watched', watchedIds.has(id));
+            }
+        });
+    }
+
+    function openMovieModal(idx) {
+        const movie = currentMovies[idx];
+        if (!movie) return;
+        showMovieModal(movie);
+    }
+
+    function openLikedMovieModal(idx) {
+        const movie = likedMoviesData[idx];
+        if (!movie) return;
+        showMovieModal(movie);
+    }
+
+    function openWatchedMovieModal(idx) {
+        const movie = watchedMoviesData[idx];
+        if (!movie) return;
+        showMovieModal(movie);
+    }
+
+    function showMovieModal(movie) {
+        const posterUrl = movie.poster?.url || movie.poster_url;
+        const title = movie.name || movie.title || 'Без названия';
+        const year = movie.year || '—';
+        const rating = movie.rating?.kp || movie.rating;
+        const genres = movie.genres || [];
+        const countries = movie.countries || [];
+        const description = movie.description || movie.shortDescription || 'Описание отсутствует.';
+        
+        const modalHtml = `
+            <div id="movieModal" class="modal-overlay" onclick="closeMovieModal(event)">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <button class="modal-close" onclick="closeMovieModal()">✕</button>
+                    <div class="modal-body">
+                        <div class="modal-poster-img">
+                            ${posterUrl ? `<img src="${posterUrl}" alt="${title}">` : '<div style="width:200px;height:300px;background:#eaf4ff;display:flex;align-items:center;justify-content:center;border-radius:12px;">▣</div>'}
+                        </div>
+                        <div class="modal-info">
+                            <h2>${title}</h2>
+                            <p>▦ ${year} | ★ ${typeof rating === 'number' ? rating.toFixed(1) : (rating || '—')}</p>
+                            ${countries.length ? `<p>🌍 ${countries.map(c => c.name || c).join(', ')}</p>` : ''}
+                            <div class="modal-genres-list">
+                                ${genres.map(g => `<span class="modal-genre-item">${g.name || g}</span>`).join('')}
+                            </div>
+                            <div class="modal-description">
+                                <strong>Описание:</strong><br>${description}
+                            </div>
+                            <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+                                <a href="https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(title)}" target="_blank" class="btn-primary" style="width:auto;">Перейти в Кинопоиск</a>
+                                <a href="https://okko.tv/search?query=${encodeURIComponent(title)}" target="_blank" class="btn-primary" style="width:auto; background:#4f94ef;">Перейти в Okko</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    function closeMovieModal(e) { 
+        if (e && e.target !== document.getElementById('movieModal')) return; 
+        document.getElementById('movieModal')?.remove(); 
+    }
+
+    // ========== RANDOM MOVIE ==========
+    async function getRandomMovie() {
+        const randomBtn = document.getElementById('randomBtn');
+        const originalText = randomBtn.textContent;
+        randomBtn.textContent = 'Загрузка...';
+        randomBtn.disabled = true;
+        try {
+            const randomPage = Math.floor(Math.random() * 20) + 1;
+            const params = new URLSearchParams();
+            params.append('page', randomPage);
+            params.append('limit', 50);
+            const res = await authFetch(`${API}/movies/search?${params}`);
+            const data = await res.json();
+            const movies = data.docs || [];
+            if (movies.length === 0) { showToast('Не удалось найти фильмы', 'error'); return; }
+            const randomIndex = Math.floor(Math.random() * movies.length);
+            showMovieModal(movies[randomIndex]);
+        } catch (err) { showToast('Ошибка', 'error'); }
+        finally { randomBtn.textContent = originalText; randomBtn.disabled = false; }
+    }
+
+    // ========== LIKED MOVIES ==========
+    async function loadLikedMovies() {
+        const grid = document.getElementById('likedGrid'), empty = document.getElementById('likedEmpty');
+        grid.innerHTML = '<div class="empty-state">Загрузка...</div>'; empty.classList.add('hidden');
+        try {
+            const res = await authFetch(`${API}/movies/liked`);
+            const data = await res.json();
+            const movies = data.movies || [];
+            likedMoviesData = movies;
+            if (movies.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+            grid.innerHTML = movies.map((m, idx) => {
+                const posterUrl = m.poster_url || m.poster?.url;
+                const title = m.name || 'Без названия';
+                const year = m.year || '—';
+                const rating = m.rating?.kp || m.rating;
+                return `
+                    <div class="movie-card" onclick="openLikedMovieModal(${idx})">
+                        <div class="movie-poster">
+                            ${posterUrl ? `<img src="${posterUrl}" alt="${title}">` : '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:48px;">▣</div>'}
+                            ${rating ? `<div class="movie-rating">★ ${typeof rating === 'number' ? rating.toFixed(1) : rating}</div>` : ''}
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${title}</div>
+                            <div class="movie-year">${year}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            setTimeout(() => observeMovieCards(), 100);
+        } catch(err) { grid.innerHTML = '<div class="empty-state">Ошибка</div>'; }
+    }
+
+    // ========== WATCHED MOVIES ==========
+    async function loadWatchedMovies() {
+        const grid = document.getElementById('watchedGrid'), empty = document.getElementById('watchedEmpty');
+        grid.innerHTML = '<div class="empty-state">Загрузка...</div>'; empty.classList.add('hidden');
+        try {
+            const res = await authFetch(`${API}/movies/watched`);
+            const data = await res.json();
+            const movies = data.movies || [];
+            watchedMoviesData = movies;
+            if (movies.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+            grid.innerHTML = movies.map((m, idx) => {
+                const posterUrl = m.poster_url || m.poster?.url;
+                const title = m.name || 'Без названия';
+                const year = m.year || '—';
+                const rating = m.rating?.kp || m.rating;
+                return `
+                    <div class="movie-card" onclick="openWatchedMovieModal(${idx})">
+                        <div class="movie-poster">
+                            ${posterUrl ? `<img src="${posterUrl}" alt="${title}">` : '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:48px;">▣</div>'}
+                            ${rating ? `<div class="movie-rating">★ ${typeof rating === 'number' ? rating.toFixed(1) : rating}</div>` : ''}
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${title}</div>
+                            <div class="movie-year">${year}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            setTimeout(() => observeMovieCards(), 100);
+        } catch(err) { grid.innerHTML = '<div class="empty-state">Ошибка</div>'; }
+    }
+
+    // ========== TAB SWITCHING ==========
+    let isTabChanging = false;
+    function switchTab(tabName) {
+        if (isTabChanging) return;
+        isTabChanging = true;
+        const currentActive = document.querySelector('.tab-pane.active');
+        const newActive = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+        if (!newActive || currentActive === newActive) {
+            isTabChanging = false;
+            return;
+        }
+        if (currentActive) {
+            currentActive.style.opacity = '0';
+            currentActive.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                currentActive.classList.remove('active');
+                currentActive.style.opacity = '';
+                currentActive.style.transform = '';
+                newActive.classList.add('active');
+                newActive.style.opacity = '0';
+                newActive.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    newActive.style.opacity = '1';
+                    newActive.style.transform = 'translateY(0)';
+                    runCinematicEntrance(newActive);
+                    isTabChanging = false;
+                }, 50);
+            }, 200);
+        } else {
+            newActive.classList.add('active');
+            isTabChanging = false;
+        }
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-tab') === tabName) {
+                btn.classList.add('active');
+            }
+        });
+        if (tabName === 'liked') loadLikedMovies();
+        else if (tabName === 'watched') loadWatchedMovies();
+        else if (tabName === 'profile') updateProfileStats();
+    }
+
+    function animateFromEdge(element, direction, delayMs) {
+        if (!element) return;
+        element.classList.remove('edge-enter', 'edge-left', 'edge-right', 'edge-top', 'edge-bottom');
+        element.style.setProperty('--enter-delay', `${delayMs}ms`);
+        void element.offsetWidth;
+        element.classList.add('edge-enter', direction);
+    }
+
+    function runCinematicEntrance(scope = null) {
+        const dirs = ['edge-left', 'edge-right', 'edge-top', 'edge-bottom'];
+        let step = 0;
+
+        if (!scope) {
+            const headerTargets = [
+                document.querySelector('.logo'),
+                document.querySelector('.main-nav'),
+                document.querySelector('.header-user')
+            ];
+            headerTargets.forEach((el, i) => {
+                if (!el) return;
+                animateFromEdge(el, dirs[i % dirs.length], 60 + i * 80);
+            });
+            step = 3;
+        }
+
+        const activePane = scope || document.querySelector('.tab-pane.active');
+        if (!activePane) return;
+
+        const paneTargets = [
+            ...activePane.querySelectorAll('h1, h2, .search-hero, .filters-card, .filters-grid .filter-item, .filters-actions button, .profile-hero, .stats-row .stat-box, .streaming-section, .empty-state')
+        ];
+
+        paneTargets.forEach((el, i) => {
+            animateFromEdge(el, dirs[(step + i) % dirs.length], 120 + i * 55);
+        });
+    }
+
+    // ========== SCROLL REVEAL ==========
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    function observeMovieCards() {
+        const cards = document.querySelectorAll('.movie-card:not(.revealed)');
+        cards.forEach(card => observer.observe(card));
+    }
+
+    // ========== PARTICLES ==========
+    function createParticles() {
+        const container = document.getElementById('particlesContainer');
+        if (!container) return;
+        container.innerHTML = '<div class="cyber-grid"></div>';
+        for (let i = 0; i < 190; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 9 + 3;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 17 + 8) + 's';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.setProperty('--move-x', ((Math.random() - 0.5) * 200) + 'px');
+            container.appendChild(particle);
+        }
+        const cinemaIcons = ['🎬', '🎥', '📽', '🎞'];
+        for (let i = 0; i < 60; i++) {
+            const filmParticle = document.createElement('div');
+            filmParticle.classList.add('film-particle');
+            filmParticle.textContent = cinemaIcons[Math.floor(Math.random() * cinemaIcons.length)];
+            const size = Math.random() * 20 + 22;
+            filmParticle.style.fontSize = size + 'px';
+            filmParticle.style.left = Math.random() * 100 + '%';
+            filmParticle.style.top = Math.random() * 100 + '%';
+            filmParticle.style.animationDuration = (Math.random() * 20 + 14) + 's';
+            filmParticle.style.animationDelay = Math.random() * 16 + 's';
+            filmParticle.style.setProperty('--move-x', ((Math.random() - 0.5) * 180) + 'px');
+            container.appendChild(filmParticle);
+        }
+        for (let i = 0; i < 120; i++) {
+            const glitch = document.createElement('div');
+            glitch.classList.add('glitch-particle');
+            glitch.style.left = Math.random() * 100 + '%';
+            glitch.style.top = Math.random() * 100 + '%';
+            glitch.style.animationDelay = Math.random() * 2 + 's';
+            glitch.style.animationDuration = (Math.random() * 0.8 + 0.3) + 's';
+            container.appendChild(glitch);
+        }
+        interactiveParticles = Array.from(container.querySelectorAll('.particle, .film-particle, .glitch-particle'));
+    }
+
+    function updateParticleRepel() {
+        if (!repelMouse.active || interactiveParticles.length === 0) {
+            interactiveParticles.forEach(el => { el.style.translate = '0 0'; });
+            repelFrameId = null;
+            return;
+        }
+
+        const radius = 140;
+        const maxPush = 34;
+
+        for (const el of interactiveParticles) {
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = cx - repelMouse.x;
+            const dy = cy - repelMouse.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < radius && dist > 0.001) {
+                const force = 1 - dist / radius;
+                const push = maxPush * force * force;
+                const ux = dx / dist;
+                const uy = dy / dist;
+                el.style.translate = `${(ux * push).toFixed(2)}px ${(uy * push).toFixed(2)}px`;
+            } else {
+                el.style.translate = '0 0';
+            }
+        }
+
+        repelFrameId = requestAnimationFrame(updateParticleRepel);
+    }
+
+    function startParticleRepel() {
+        if (repelFrameId !== null) return;
+        repelFrameId = requestAnimationFrame(updateParticleRepel);
+    }
+
+    function stopParticleRepel() {
+        repelMouse.active = false;
+        if (repelFrameId !== null) {
+            cancelAnimationFrame(repelFrameId);
+            repelFrameId = null;
+        }
+        interactiveParticles.forEach(el => { el.style.translate = '0 0'; });
+    }
+
+    // ========== INIT ==========
+    function init() {
+        const yearSelect = document.getElementById('yearFilter');
+        for (let y = new Date().getFullYear(); y >= 1960; y--) { 
+            const opt = document.createElement('option'); 
+            opt.value = y; 
+            opt.textContent = y; 
+            yearSelect.appendChild(opt); 
+        }
+        
+        document.getElementById('tabLoginBtn').onclick = () => switchAuthTab('login');
+        document.getElementById('tabRegisterBtn').onclick = () => switchAuthTab('register');
+        document.getElementById('loginBtn').onclick = handleLogin;
+        document.getElementById('registerBtn').onclick = handleRegister;
+        document.getElementById('logoutBtn').onclick = hideApp;
+        document.getElementById('searchBtn').onclick = searchMovies;
+        document.getElementById('randomBtn').onclick = getRandomMovie;
+        document.getElementById('resetBtn').onclick = () => { 
+            document.getElementById('descriptionInput').value = '';
+            document.getElementById('genreFilter').value = ''; 
+            document.getElementById('countryFilter').value = ''; 
+            document.getElementById('yearFilter').value = ''; 
+            document.getElementById('searchResults').innerHTML = '';
+        };
+        document.getElementById('descriptionInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchMovies();
+        });
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchTab(btn.dataset.tab));
+        if (token) { showApp(); }
+        createParticles();
+        document.addEventListener('mousemove', (e) => {
+            repelMouse.x = e.clientX;
+            repelMouse.y = e.clientY;
+            repelMouse.active = true;
+            startParticleRepel();
+        });
+        document.addEventListener('mouseleave', stopParticleRepel);
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.movie-card:not(.revealed)').forEach(card => {
+                if (card.getBoundingClientRect().top < window.innerHeight - 100) {
+                    card.classList.add('revealed');
+                }
+            });
+        });
+    }
+    init();
+</script>
+</body>
+</html>
