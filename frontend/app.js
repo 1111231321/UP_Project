@@ -1,7 +1,10 @@
 /* ═══════════════════════════════════════════
    CONSTANTS & STATE
 ═══════════════════════════════════════════ */
-const API = 'https://up-project.onrender.com/api';
+const API = window.location.hostname === 'localhost' 
+  ? 'http://localhost:3001/api'  // Локальная разработка
+  : 'https://up-project.onrender.com/api'; // Замените на ваш URL в Render
+
 
 const state = {
   token:        null,
