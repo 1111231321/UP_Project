@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════
    CONSTANTS & STATE
 ═══════════════════════════════════════════ */
-const API = 'http://localhost:3000/api';
+const API = 'https://up-project.onrender.com/api';
 
 const state = {
   token:        null,
