@@ -1,0 +1,53 @@
+3. Анализ и разработка требований к программной среде
+3.1. Клиентская часть (браузер)
+Браузеры: Google Chrome (последние 2 версии), Mozilla Firefox, Safari, Edge.
+
+Разрешение экрана: от 320px (мобильные устройства) до 3840px.
+
+Технологии: HTML5, CSS3 (Flexbox/Grid, анимации), JavaScript (ES6+), LocalStorage, Fetch API, Intersection Observer API.
+
+3.2. Серверная часть (бэкенд)
+Среда выполнения: Node.js версии 18.x или выше.
+
+Фреймворк: Express.js.
+
+База данных: PostgreSQL 14+.
+
+Библиотеки:
+
+pg (node-postgres) — подключение к БД.
+
+cors — настройка CORS.
+
+dotenv — управление переменными окружения.
+
+axios — HTTP-запросы к Kinopoisk/OMDb API.
+
+bcryptjs — хэширование паролей.
+
+jsonwebtoken — генерация и валидация JWT.
+
+3.3. Внешние API
+Kinopoisk API (v1.4):
+
+Эндпоинт: https://api.kinopoisk.dev/v1.4/movie
+
+Требования: API-ключ в заголовке X-API-KEY.
+
+OMDb API (резервный):
+
+Эндпоинт: http://www.omdbapi.com/
+
+Требования: API-ключ в параметре apikey.
+
+3.4. Переменные окружения (.env)
+env
+PORT=3001
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=kinofinder
+DB_USER=postgres
+DB_PASSWORD=your_password
+JWT_SECRET=your_super_secret_key
+KP_API_KEY=your_kinopoisk_api_key
+OMDB_API_KEY=your_omdb_api_key
