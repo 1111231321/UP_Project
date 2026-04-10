@@ -8,12 +8,18 @@ const cors     = require('cors');
 const axios    = require('axios');
 
 const app  = express();
+
+// Подключение к базе данных через URL или отдельные параметры
 const pool = new Pool({
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     process.env.DB_PORT     || 5432,
-  database: process.env.DB_NAME     || 'kinofinder',
-  user:     process.env.DB_USER     || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ...(process.env.DB_HOST && {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'kinofinder',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+  }),
 });
 
 const JWT_SECRET    = process.env.JWT_SECRET || 'supersecret_change_me';
@@ -21,12 +27,36 @@ const KP_API_KEY    = process.env.KP_API_KEY || 'YOUR_KINOPOISK_API_KEY';
 const KP_BASE       = 'https://api.kinopoisk.dev/v1.4';
 const OMDB_API_KEY  = process.env.OMDB_API_KEY || '';
 const OMDB_BASE     = 'https://www.omdbapi.com/';
-const PORT          = process.env.PORT || 3000;
+const PORT          = process.env.PORT || 3001;
+const FRONTEND_URL  = process.env.FRONTEND_URL || 'https://kinofonder.netlify.app';
 
 /* ─── MIDDLEWARE ─── */
-app.use(cors({ origin: '*' }));
+// Настройка CORS для Netlify
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:5500',
+  'https://kinofonder.netlify.app',
+  FRONTEND_URL,
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Разрешить запросы без origin (например, от curl или Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('Blocked origin:', origin);
+      callback(null, true); // Временно разрешаем все для отладки
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static('../frontend')); // Для локальной разработки
 
 /* ─── JWT MIDDLEWARE ─── */
 function auth(req, res, next) {
@@ -667,7 +697,7 @@ app.get('/api/user/profile', auth, async (req, res) => {
 function normalizeDbMovie(row) {
   return {
     id:             row.id,
-    kinopoisk_id:   row.id,
+    kinopoisk_id:   row.kinopoisk_id,
     name:           row.name,
     year:           row.year,
     poster_url:     row.poster_url,
@@ -681,8 +711,8 @@ function normalizeDbMovie(row) {
 /* ─── START ─── */
 app.listen(PORT, () => {
   console.log(`✅ Сервер запущен: http://localhost:${PORT}`);
+  console.log(`🌐 Разрешённые CORS origins:`, allowedOrigins);
   console.log(`📡 Kinopoisk API Key: ${KP_API_KEY && KP_API_KEY !== 'YOUR_KINOPOISK_API_KEY' ? '✅ Установлен' : '⚠️ НЕ УСТАНОВЛЕН'}`);
-  console.log(`🔑 API Key starts with: ${KP_API_KEY ? KP_API_KEY.substring(0, 10) + '...' : 'NOT SET'}`);
   console.log(`🎞 OMDb API Key: ${OMDB_API_KEY ? '✅ Установлен' : '⚠️ НЕ УСТАНОВЛЕН'}`);
 });
 
