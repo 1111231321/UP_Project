@@ -40,7 +40,31 @@ const allowedOrigins = [
   FRONTEND_URL,
 ];
 
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://kinofonder.netlify.app';
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowed = [
+      'http://localhost:3000',
+      'http://localhost:5500',
+      FRONTEND_URL,
+      'https://kinofonder.netlify.app',
+      // добавь свой custom domain, если есть
+    ];
+
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 //app.use(express.static('../frontend')); // Для локальной разработки
