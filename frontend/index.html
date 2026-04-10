@@ -190,8 +190,17 @@
 
 <script>
     // ========== CONFIG ==========
-    const API = 'http://localhost:3001/api';
-    
+    // ========== CONFIG ==========
+    // Автоматически определяем, где мы запускаемся
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname.includes('127.0.0.1');
+
+    const API = isLocal 
+        ? 'http://localhost:3001/api' 
+        : 'https://up-project.onrender.com/api';   // ← твой реальный Render URL
+
+    console.log('API URL:', API);
     // ========== STATE ==========
     let token = localStorage.getItem('token');
     let currentUser = (() => {
