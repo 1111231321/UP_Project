@@ -10,17 +10,19 @@ const axios    = require('axios');
 const app  = express();
 
 // Подключение к базе данных через URL или отдельные параметры
+// Подключение к базе данных Render Postgres
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  ...(process.env.DB_HOST && {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 5432,
-    database: process.env.DB_NAME || 'kinofinder',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
-  }),
+  ssl: {
+    rejectUnauthorized: false   // Обязательно для Render
+  },
+  // Дополнительно для стабильности
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 });
+
+console.log('Database connected with URL:', process.env.DATABASE_URL ? '✅ URL установлен' : '❌ DATABASE_URL отсутствует!');
 
 const JWT_SECRET    = process.env.JWT_SECRET || 'supersecret_change_me';
 const KP_API_KEY    = process.env.KP_API_KEY || 'YOUR_KINOPOISK_API_KEY';
