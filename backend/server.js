@@ -40,23 +40,10 @@ const allowedOrigins = [
   FRONTEND_URL,
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    // Разрешить запросы без origin (например, от curl или Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('Blocked origin:', origin);
-      callback(null, true); // Временно разрешаем все для отладки
-    }
-  },
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
-app.use(express.static('../frontend')); // Для локальной разработки
+//app.use(express.static('../frontend')); // Для локальной разработки
 
 /* ─── JWT MIDDLEWARE ─── */
 function auth(req, res, next) {
